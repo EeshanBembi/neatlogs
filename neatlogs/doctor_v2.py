@@ -34,6 +34,7 @@ _REMEDIATION = {
     "CREDENTIAL_MISSING": "SET_CREDENTIAL",
     "AUTH_FAILED": "CHECK_INGEST_CREDENTIAL",
     "BACKEND_PROBE_UNAVAILABLE": "CHECK_DIAGNOSTIC_ENDPOINT",
+    "ENDPOINT_INVALID": "SET_ENDPOINT",
     "PROVIDER_OWNERSHIP_AMBIGUOUS": "USE_PRIVATE_PROVIDER",
     "TRACE_ID_INVALID": "RECREATE_TRACE",
     "SPAN_ID_INVALID": "RECREATE_SPAN",
@@ -582,9 +583,26 @@ def doctor_probe_v2(
                 )
             ],
         }
-    url = _safe_endpoint(
-        (endpoint or os.getenv("NEATLOGS_ENDPOINT") or "https://ingest.neatlogs.com").strip()
-    )
+    try:
+        url = _safe_endpoint(
+            (endpoint or os.getenv("NEATLOGS_ENDPOINT") or "https://ingest.neatlogs.com").strip()
+        )
+    except ValueError:
+        return {
+            **local,
+            "mode": "probe",
+            "status": "fail",
+            "first_failure": "ENDPOINT_INVALID",
+            "checks": [
+                *local["checks"],
+                _check(
+                    "endpoint",
+                    "fail",
+                    "ENDPOINT_INVALID",
+                    "Configure an absolute HTTP or HTTPS diagnostic endpoint",
+                ),
+            ],
+        }
     headers = {"x-api-key": key, "content-type": "application/json"}
     session_id = None
     try:

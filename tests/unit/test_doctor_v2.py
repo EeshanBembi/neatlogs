@@ -191,6 +191,13 @@ def test_probe_missing_credential_never_echoes_environment(monkeypatch):
     monkeypatch.delenv("NEATLOGS_API_KEY", raising=False)
     result = doctor_probe_v2()
     assert result["first_failure"] == "CREDENTIAL_MISSING"
+
+
+def test_probe_invalid_endpoint_returns_stable_configuration_failure():
+    result = doctor_probe_v2(api_key="test-key", endpoint="not-a-url")
+    assert result["status"] == "fail"
+    assert result["first_failure"] == "ENDPOINT_INVALID"
+    assert result["checks"][-1]["remediation_code"] == "SET_ENDPOINT"
     assert "api_key" not in json.dumps(result).lower()
 
 
