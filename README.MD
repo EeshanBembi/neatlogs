@@ -57,7 +57,9 @@ python -m neatlogs doctor --local --json
 A passing local result proves that this installed SDK pipeline works. It does not
 prove that an application's own instrumentors or backend export are working. Use
 `doctor_captured_local_v2()` inside the instrumented application to validate its
-actual final masked envelope, or `doctor --probe` for authenticated backend stages.
+actual final masked envelope. Use `doctor --probe` to export a controlled trace
+through `/v1/traces` and read that exact trace back through
+`/api/traces/v3/:traceId`; HTTP acceptance or exporter flush alone is not a pass.
 
 ---
 
