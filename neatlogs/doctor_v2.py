@@ -702,7 +702,15 @@ def _persisted_probe_result(local: dict[str, Any], trace_data: Mapping[str, Any]
     readback_span_count = (
         trace_data.get("spanCount") if isinstance(trace_data.get("spanCount"), int) else len(spans)
     )
-    visible = trace_data.get("_id") == local.get("capture", {}).get("trace_id")
+    raw_persisted_trace_id = trace_data.get("_id")
+    persisted_trace_id = (
+        raw_persisted_trace_id
+        if isinstance(raw_persisted_trace_id, str)
+        and _TRACE_ID.fullmatch(raw_persisted_trace_id)
+        else local.get("capture", {}).get("trace_id", "")
+    )
+    visible = raw_persisted_trace_id == local.get("capture", {}).get("trace_id")
+    duplicate_span_count = len(spans) - len(id_set)
     validations = (
         (
             "probe_visibility",
@@ -768,7 +776,11 @@ def _persisted_probe_result(local: dict[str, Any], trace_data: Mapping[str, Any]
             "marker_header": "x-neatlogs-doctor",
             "marker_version": "v1",
             "visible": visible,
+            "readback_trace_id": persisted_trace_id,
+            "finalized": True,
             "readback_span_count": readback_span_count,
+            "meaningful_root_count": len(roots),
+            "duplicate_span_count": duplicate_span_count,
             "hierarchy_valid": hierarchy_valid,
             "attributes_valid": attributes_valid,
             "input_output_valid": input_output_valid,
