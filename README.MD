@@ -309,7 +309,7 @@ Runnable reference apps live in [`examples/sdk_examples/`](examples/sdk_examples
 
 ## Demo: counterfactual trace replay
 
-<video poster="assets/demo/counterfactual-replay.jpg" src="https://cdn.jsdelivr.net/gh/EeshanBembi/neatlogs@feat/counterfactual-replay/assets/demo/counterfactual-replay.mp4" controls width="100%"></video>
+[![Counterfactual replay demo — click to play in a new tab](assets/demo/counterfactual-replay.jpg)](https://cdn.jsdelivr.net/gh/EeshanBembi/neatlogs@feat/counterfactual-replay/assets/demo/counterfactual-replay.mp4)
 
 Replay a failed LLM span with one changed prompt, compare original vs replay, and keep the eval case — see [`examples/sdk_examples/counterfactual_replay_basic.py`](examples/sdk_examples/counterfactual_replay_basic.py) and [`docs/counterfactual-replay.md`](docs/counterfactual-replay.md).
 
